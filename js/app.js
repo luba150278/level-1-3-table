@@ -55,6 +55,8 @@ window.onload = () => {
     let arr = [];
     let arrItem;
     let dataToArray = users.map(arr => [arr.name, arr.surname, arr.age]);
+    let xxx = users.split('\n');
+      console.log(xxx)
 
     for (let i = 0; i < dataToArray.length; i++) {
       let j = 0;

@@ -61,6 +61,11 @@ table thead tr th {
   border: 1px solid #2196f3;
 }
 
+table thead tr th:hover {
+  background: #9fafc0;
+  cursor: pointer;
+}
+
 table tbody tr th {
   font-weight: 300;
   border: 1px solid #e8e9eb;
@@ -71,7 +76,7 @@ table tbody tr:nth-child(2n) {
 }
 
 table tbody tr:hover {
-  background: #ebffe8;
+  background: #9fafc0;
   cursor: pointer;
   font-weight: 400;
 }
