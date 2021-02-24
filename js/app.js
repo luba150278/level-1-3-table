@@ -14,8 +14,7 @@ window.onload = () => {
 
     config.columns.map(arr => tr.appendChild(addItem('th', arr.title)));
 
-    dataToArray = data.map(arr => [arr.id, arr.name, arr.surname, arr.age]);
-
+    dataToArray = data.map(arr => [arr.id, arr.name, arr.surname, arr.age]);    
     for (let i = 0; i < dataToArray.length; i++) {
       tr = document.createElement('tr');
       tbody.appendChild(tr);
@@ -55,8 +54,6 @@ window.onload = () => {
     let arr = [];
     let arrItem;
     let dataToArray = users.map(arr => [arr.name, arr.surname, arr.age]);
-    let xxx = users.split('\n');
-      console.log(xxx)
 
     for (let i = 0; i < dataToArray.length; i++) {
       let j = 0;
