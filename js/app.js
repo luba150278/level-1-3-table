@@ -17,8 +17,8 @@ window.onload = () => {
     { id: 30051, name: 'Вячеслав', surname: 'Андреев', age: 15 },
   ];
   let tableRow;
-  let idParent;
-  let idTable;
+  let idParent; //id div where was added table
+  let idTable;  //id table
   let newData = tableData(config1, users); //Select data equals config colums; 
   DataTable(config1, true, 'tbl_1'); //Start adding table
 
@@ -53,8 +53,11 @@ window.onload = () => {
   }
 
   /**
-   * Main function - form data, create table and add it in HTML
+   * Main function - form data, create table and add it in HTML.
+   * Here also repaint body after use sorting
    * @param {*} config - data about table titles and needed columns
+   * @param {*} isRepaintHead if use sort then we didn't repaint table header
+   * @param {*} tableName - table id 
    */
   function DataTable(config, isRepaintHead, tableName) {
     idTable = tableName;
@@ -68,12 +71,12 @@ window.onload = () => {
       table.appendChild(tableHead);
       tableHead.appendChild(tableRow);
       formCells('th', 0, true);  //form table head
-    }else{
+    } else {
       table = document.getElementById(idTable);
     }
 
-    let tableBody = document.createElement('tbody');     
-    table.appendChild(tableBody);   
+    let tableBody = document.createElement('tbody');
+    table.appendChild(tableBody);
     //form table body
     for (let i = 1; i < newData.length; i++) {
       tableRow = document.createElement('tr');
@@ -81,7 +84,6 @@ window.onload = () => {
       formCells('td', i, false);
     }
     document.getElementById(idParent).append(table);
-    //formEventForFilter();
   }
 
   /**
@@ -98,9 +100,11 @@ window.onload = () => {
   }
 
   /**
-   * Add text to row cell
+   *  Add text to row cell
    * @param {*} element 
    * @param {*} text 
+   * @param {*} isArrow - for header add filter arrows
+   * @param {*} id - element id
    */
   function addTextToCell(element, text, isArrow, id) {
     let th = document.createElement(element);
@@ -114,38 +118,17 @@ window.onload = () => {
       th.onclick = () => sort(id, arrow);
       th.appendChild(arrow);
     }
-
     return th;
   }
 
   /**
-   * Add "click" listener for header columns. Start sort by click
-   */
-  function formEventForFilter() {
-    let headerCols = document.querySelectorAll("thead > tr th");
-    headerCols.forEach(item => {
-      let el = document.getElementById(item.id);
-      let columnName = item.id.substring(3);
-      el.addEventListener("click", (event) => {
-        sortTable(columnName);
-        reloadTable();
-      });
-    })
-  }
-
-  /**
    * Sort table by column
-   * @param {*} columnName name of column
+   * @param {*} columnName name of table column
+   * @param {*} arrow 
    */
-  function sortTable(columnName) {
-    let bodyTable = newData.filter((item, i) => i > 0)
-    bodyTable.sort((a, b) => a[columnName] < b[columnName] ? -1 : 1)
-    newData = tableData(config1, bodyTable);
-  }
-
   function sort(columnName, arrow) {
     let sortedData = newData.filter((item, i) => i > 0);
-    
+    //sort body data
     if (arrow.classList.contains("arrow-up")) {
       arrow.classList.remove("arrow-up");
       arrow.classList.add("arrow-down");
@@ -155,26 +138,16 @@ window.onload = () => {
       arrow.classList.add("arrow-up");
       sortedData.sort((a, b) => a[columnName] < b[columnName] ? -1 : 1);
     }
-
-    for(let i=1; i< newData.length; i++){
-      newData[i] = sortedData[i-1];
+    //change old table data by sorted data
+    for (let i = 1; i < newData.length; i++) {
+      newData[i] = sortedData[i - 1];
     }
+
+    //repaint table body
     let table = document.getElementById(idTable)
     table.removeChild(table.lastChild);
     DataTable(config1, false, idTable);
   }
-
-  /**
-   * Repaint sorted table
-   */
-  function reloadTable() {
-    let element = document.getElementById(idParent);
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
-    }
-    DataTable(config1)
-  }
-
 
   //----------USE EXTERNAL LIBRARY-----------
   /**
