@@ -17,9 +17,10 @@ window.onload = () => {
     { id: 30051, name: 'Вячеслав', surname: 'Андреев', age: 15 },
   ];
   let tableRow;
+  let idParent;
   let idTable;
   let newData = tableData(config1, users); //Select data equals config colums; 
-  DataTable(config1); //Start adding table
+  DataTable(config1, true, 'tbl_1'); //Start adding table
 
   /**
   * Select data to the table
@@ -55,27 +56,32 @@ window.onload = () => {
    * Main function - form data, create table and add it in HTML
    * @param {*} config - data about table titles and needed columns
    */
-  function DataTable(config) {
-    idTable = config.parent.substring(1);
-    let table = document.createElement('table');
-    let tableHead = document.createElement('thead');
-    let tableBody = document.createElement('tbody');
-    tableRow = document.createElement('tr');
+  function DataTable(config, isRepaintHead, tableName) {
+    idTable = tableName;
+    idParent = config.parent.substring(1);
+    let table, tableHead;
+    if (isRepaintHead) {
+      table = document.createElement('table');
+      table.id = idTable;
+      tableHead = document.createElement('thead');
+      tableRow = document.createElement('tr');
+      table.appendChild(tableHead);
+      tableHead.appendChild(tableRow);
+      formCells('th', 0, true);  //form table head
+    }else{
+      table = document.getElementById(idTable);
+    }
 
-    table.appendChild(tableHead);
-    table.appendChild(tableBody);
-    tableHead.appendChild(tableRow);
-
-    formCells('th', 0, true);  //form table head
-
+    let tableBody = document.createElement('tbody');     
+    table.appendChild(tableBody);   
     //form table body
     for (let i = 1; i < newData.length; i++) {
       tableRow = document.createElement('tr');
       tableBody.appendChild(tableRow);
       formCells('td', i, false);
     }
-    document.getElementById(idTable).append(table);
-    formEventForFilter();
+    document.getElementById(idParent).append(table);
+    //formEventForFilter();
   }
 
   /**
@@ -104,7 +110,8 @@ window.onload = () => {
     if (isArrow) {
       th.id = `th_${id}`;
       let arrow = document.createElement("div");
-      arrow.className = "arrow arrow-up";
+      arrow.className = "arrow";
+      th.onclick = () => sort(id, arrow);
       th.appendChild(arrow);
     }
 
@@ -136,11 +143,32 @@ window.onload = () => {
     newData = tableData(config1, bodyTable);
   }
 
+  function sort(columnName, arrow) {
+    let sortedData = newData.filter((item, i) => i > 0);
+    
+    if (arrow.classList.contains("arrow-up")) {
+      arrow.classList.remove("arrow-up");
+      arrow.classList.add("arrow-down");
+      sortedData.sort((a, b) => a[columnName] > b[columnName] ? -1 : 1);
+    } else {
+      arrow.classList.remove("arrow-down");
+      arrow.classList.add("arrow-up");
+      sortedData.sort((a, b) => a[columnName] < b[columnName] ? -1 : 1);
+    }
+
+    for(let i=1; i< newData.length; i++){
+      newData[i] = sortedData[i-1];
+    }
+    let table = document.getElementById(idTable)
+    table.removeChild(table.lastChild);
+    DataTable(config1, false, idTable);
+  }
+
   /**
    * Repaint sorted table
    */
   function reloadTable() {
-    let element = document.getElementById(idTable);
+    let element = document.getElementById(idParent);
     while (element.firstChild) {
       element.removeChild(element.firstChild);
     }
